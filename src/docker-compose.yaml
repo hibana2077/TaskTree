@@ -18,3 +18,23 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: example # this is the password you set in the previous step
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/ # mongodb://<username>:<password>@mongo:27017/
       ME_CONFIG_BASICAUTH: false
+
+  backend:
+    build: ./backend
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo
+    environment:
+      LLM_PROVIDER: "groq"
+      LLM_API_KEY: "your_llm_api_key"
+      MONGO_URI: mongodb://root:example@mongo:27017/ # mongodb://<username>:<password>@mongo:27017/
+
+  web:
+    build: ./web
+    ports:
+      - 5000:5000
+    depends_on:
+      - backend
+    environment:
+      VITE_BACKEND_URL: "http://backend:3000" # http://<service-name>:<port>
